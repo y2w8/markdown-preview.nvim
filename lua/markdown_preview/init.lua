@@ -9,6 +9,11 @@ M.config = {
 	port = 0, -- 0 = auto; effective port depends on instance_mode
 	open_browser = true,
 
+	-- nil = system default browser. String for app/binary name (e.g. "Firefox",
+	-- "google-chrome"). Table for full command with args (URL is appended).
+	-- On macOS, string values are passed via `open -a <name>`.
+	browser = nil,
+
 	-- "takeover" = shared workspace + fixed port, one browser tab across instances
 	-- "multi" = per-instance server + browser tab (port 0 recommended)
 	instance_mode = "takeover",
@@ -470,7 +475,7 @@ function M.start()
 
 		if M.config.open_browser then
 			vim.defer_fn(function()
-				util.open_in_browser(("http://127.0.0.1:%d/"):format(inst.port))
+				util.open_in_browser(("http://127.0.0.1:%d/"):format(inst.port), M.config.browser)
 			end, 200)
 		end
 	else
@@ -482,7 +487,7 @@ function M.start()
 		-- No browser tab connected (user closed it)? Re-open.
 		if M.config.open_browser and ls_server.connected_client_count(M._server_instance) == 0 then
 			vim.defer_fn(function()
-				util.open_in_browser(("http://127.0.0.1:%d/"):format(M._server_instance.port))
+				util.open_in_browser(("http://127.0.0.1:%d/"):format(M._server_instance.port), M.config.browser)
 			end, 200)
 		end
 	end

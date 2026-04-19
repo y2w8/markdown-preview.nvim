@@ -69,9 +69,22 @@ function M.resolve_asset(rel)
 	return nil
 end
 
-function M.open_in_browser(url)
+---Open a URL in the browser.
+---@param url string
+---@param browser string|table|nil Optional override. String = browser name/binary.
+---  Table = full command (URL appended). nil = system default.
+function M.open_in_browser(url, browser)
 	local cmd
-	if vim.fn.has("mac") == 1 then
+	if browser then
+		if type(browser) == "table" then
+			cmd = vim.list_extend(vim.deepcopy(browser), { url })
+		elseif vim.fn.has("mac") == 1 then
+			-- On macOS, `open -a` resolves app names like "Firefox" or "Google Chrome"
+			cmd = { "open", "-a", browser, url }
+		else
+			cmd = { browser, url }
+		end
+	elseif vim.fn.has("mac") == 1 then
 		cmd = { "open", url }
 	elseif vim.fn.has("wsl") == 1 then
 		cmd = { "explorer.exe", url }

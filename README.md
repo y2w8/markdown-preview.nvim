@@ -99,6 +99,12 @@ require("markdown_preview").setup({
   port = 0,                             -- 0 = auto (8421 for takeover, OS-assigned for multi)
   open_browser = true,                  -- auto-open browser on start
 
+  -- nil = system default browser
+  -- string = browser name ("Firefox") or binary ("google-chrome")
+  -- table = full command, URL appended ({ "google-chrome", "--incognito" })
+  -- On macOS, string values are passed via `open -a <name>`.
+  browser = nil,
+
   content_name = "content.md",          -- workspace content file
   index_name = "index.html",            -- workspace HTML file
   workspace_dir = nil,                  -- nil = auto (shared for takeover, per-buffer for multi)
