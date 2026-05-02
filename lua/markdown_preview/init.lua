@@ -20,6 +20,7 @@ M.config = {
 
 	content_name = "content.md",
 	index_name = "index.html",
+  custom_css = "",
 
 	-- nil = per-buffer workspace (recommended); set a path to override
 	workspace_dir = nil,
@@ -95,6 +96,18 @@ local function write_index(dir)
 	end
 	local content = util.read_text(src)
 	content = content:gsub("__BOTTOM_PADDING__", tostring(M.config.bottom_padding))
+
+  -- Inline custom CSS if configured
+  if M.config.custom_css and M.config.custom_css ~= "" then
+    local css_src = vim.fn.expand(M.config.custom_css)
+    if vim.fn.filereadable(css_src) == 1 then
+      local css = util.read_text(css_src)
+      content = content:gsub("</head>", "<style>\n" .. css .. "\n</style>\n</head>")
+    else
+      vim.notify("Markdown Preview: custom_css not found: " .. css_src, vim.log.levels.WARN)
+    end
+  end
+
 	util.write_text(dst, content)
 	return dst
 end
